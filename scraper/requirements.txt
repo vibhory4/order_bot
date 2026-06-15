@@ -1,0 +1,4 @@
+# Scraper dependencies. httpx is only needed for live crawls; --fixtures mode
+# (offline dry-run) needs only pydantic + the stdlib.
+httpx
+pydantic

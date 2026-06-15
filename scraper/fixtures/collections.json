@@ -1,0 +1,22 @@
+{
+  "collections": [
+    {
+      "id": 100001,
+      "handle": "birthday-cakes",
+      "title": "Birthday Cakes",
+      "body_html": "<p>Celebrate with our <strong>birthday cakes</strong> &amp; more.</p>",
+      "published_at": "2023-01-10T10:00:00+05:30",
+      "updated_at": "2024-05-01T10:00:00+05:30",
+      "products_count": 42
+    },
+    {
+      "id": 100002,
+      "handle": "eggless-cakes",
+      "title": "Eggless Cakes",
+      "body_html": "<p>100% eggless range.</p>",
+      "published_at": "2023-02-10T10:00:00+05:30",
+      "updated_at": "2024-05-01T10:00:00+05:30",
+      "products_count": 18
+    }
+  ]
+}
