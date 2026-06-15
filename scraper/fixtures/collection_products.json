@@ -1,0 +1,19 @@
+{
+  "products": [
+    {
+      "id": 200001,
+      "title": "Chocolate Truffle Cake",
+      "handle": "chocolate-truffle-cake",
+      "body_html": "<p>Rich <em>chocolate truffle</em> cake.</p>",
+      "product_type": "Cake",
+      "tags": "chocolate, bestseller, birthday",
+      "variants": [
+        {"id": 1, "title": "0.5 Kg", "price": "599.00", "sku": "CTC-05"},
+        {"id": 2, "title": "1 Kg", "price": "999.00", "sku": "CTC-10"}
+      ],
+      "images": [
+        {"id": 11, "src": "https://cdn.shopify.com/s/files/ctc-1.jpg"}
+      ]
+    }
+  ]
+}

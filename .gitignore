@@ -4,3 +4,9 @@ __pycache__/
 .venv/
 .DS_Store
 .claude/
+
+# Scraper output + raw response cache (fixtures under scraper/ stay tracked)
+data/raw/
+data/competitor_products.csv
+data/competitor_products.jsonl
+data/competitor_collections.csv

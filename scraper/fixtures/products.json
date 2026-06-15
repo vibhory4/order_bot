@@ -1,0 +1,41 @@
+{
+  "products": [
+    {
+      "id": 200001,
+      "title": "Chocolate Truffle Cake",
+      "handle": "chocolate-truffle-cake",
+      "body_html": "<p>Rich <em>chocolate truffle</em> cake.</p>",
+      "product_type": "Cake",
+      "tags": "chocolate, bestseller, birthday",
+      "variants": [
+        {"id": 1, "title": "0.5 Kg", "price": "599.00", "sku": "CTC-05"},
+        {"id": 2, "title": "1 Kg", "price": "999.00", "sku": "CTC-10"}
+      ],
+      "images": [
+        {"id": 11, "src": "https://cdn.shopify.com/s/files/ctc-1.jpg"}
+      ]
+    },
+    {
+      "id": 200002,
+      "title": "Red Velvet Jar Cake",
+      "handle": "red-velvet-jar-cake",
+      "body_html": "Creamy red velvet in a jar.",
+      "product_type": "Jar Cake",
+      "tags": ["red velvet", "jar"],
+      "variants": [
+        {"id": 3, "title": "Single", "price": "249.00", "sku": "RVJ-1"}
+      ],
+      "images": []
+    },
+    {
+      "id": 200003,
+      "title": "Broken Product Without Handle",
+      "handle": null,
+      "body_html": "<p>This row is intentionally malformed to exercise validate-and-skip.</p>",
+      "product_type": "Cake",
+      "tags": "test",
+      "variants": [],
+      "images": []
+    }
+  ]
+}
