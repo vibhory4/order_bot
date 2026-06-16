@@ -28,6 +28,16 @@
       "images": []
     },
     {
+      "id": 200004,
+      "title": "Eggless Butterscotch Cake",
+      "handle": "eggless-butterscotch-cake",
+      "body_html": "",
+      "product_type": "Eggless Cake",
+      "tags": "eggless, butterscotch",
+      "variants": [],
+      "images": []
+    },
+    {
       "id": 200003,
       "title": "Broken Product Without Handle",
       "handle": null,

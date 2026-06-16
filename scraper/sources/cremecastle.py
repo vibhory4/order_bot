@@ -61,7 +61,12 @@ def _enrich_meta(product_rows: list[dict], fixtures: bool) -> None:
     for row in product_rows:
         try:
             if fixtures:
-                html_text = fetch.load_fixture_text("product_page.html")
+                # Prefer a per-handle page fixture (mirrors live: each product
+                # fetches its own page); fall back to a generic sample.
+                try:
+                    html_text = fetch.load_fixture_text(f"pages/{row.get('handle')}.html")
+                except FileNotFoundError:
+                    html_text = fetch.load_fixture_text("product_page.html")
             else:
                 html_text = fetch.fetch_text(SOURCE, row["url"])
         except Exception as exc:  # noqa: BLE001 - one bad page must not stop the run
