@@ -1,0 +1,30 @@
+THIRD-PARTY VENDORED CODE — NOTICE
+==================================
+
+File: shopfiy_scraper.py
+
+Source:  https://github.com/grabowskiadrian/shopify-products-scraper
+Author:  Adrian Grabowski (grabowskiadrian)
+Vendored: 2026-06-16, from branch `master`
+          (raw: https://raw.githubusercontent.com/grabowskiadrian/shopify-products-scraper/master/shopfiy_scraper.py)
+
+LICENSE
+-------
+The upstream repository states NO license. Under default copyright, that means
+"all rights reserved" by the original author. This copy is retained here for
+internal, non-commercial research use only. If this project is ever published,
+redistributed, or used commercially, obtain explicit permission from the author
+or replace this file with our own MIT-licensed `scraper/` package, which covers
+the same functionality (and more: collections, caching, rate-limiting, robots,
+validation).
+
+LOCAL MODIFICATIONS
+-------------------
+A minimal "politeness" layer was added (lines marked `# [politeness]`). Behaviour
+and output columns are unchanged. Changes:
+  * all HTTP routed through a shared requests.Session with a descriptive
+    research User-Agent
+  * per-request timeout (30s) and a ~1 request/second throttle
+  * per-product errors are logged to stderr and skipped instead of crashing
+  * guards for missing <title> / body_html
+  * corrected requirements.txt (added requests, pandas)

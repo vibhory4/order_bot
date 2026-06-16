@@ -10,3 +10,6 @@ data/raw/
 data/competitor_products.csv
 data/competitor_products.jsonl
 data/competitor_collections.csv
+
+# Vendored grabowskiadrian scraper output
+third_party/shopify_products_scraper/products.csv

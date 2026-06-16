@@ -1,0 +1,5 @@
+# Corrected dependency list. Upstream requirements.txt listed only beautifulsoup4,
+# but the script also imports requests and pandas (a plain upstream install crashes).
+requests
+beautifulsoup4
+pandas
