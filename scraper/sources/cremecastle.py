@@ -38,11 +38,46 @@ def _paginated(path_template: str) -> list[dict]:
     return payloads
 
 
-def crawl(fixtures: bool = False) -> tuple[list[dict], list[dict]]:
-    """Return ``(product_rows, collection_rows)`` for Creme Castle."""
+def crawl(fixtures: bool = False, enrich_meta: bool = False) -> tuple[list[dict], list[dict]]:
+    """Return ``(product_rows, collection_rows)`` for Creme Castle.
+
+    When ``enrich_meta`` is set, a second pass fetches each product's HTML page
+    to fill the SEO ``meta_title`` / ``meta_description`` fields (and backfill
+    description / price from JSON-LD) that the public JSON does not expose.
+    """
     if fixtures:
-        return _crawl_fixtures()
-    return _crawl_live()
+        product_rows, collection_rows = _crawl_fixtures()
+    else:
+        product_rows, collection_rows = _crawl_live()
+
+    if enrich_meta:
+        _enrich_meta(product_rows, fixtures=fixtures)
+
+    return product_rows, collection_rows
+
+
+def _enrich_meta(product_rows: list[dict], fixtures: bool) -> None:
+    """Pass 2: fill SEO meta fields from each product's HTML page. Mutates rows."""
+    for row in product_rows:
+        try:
+            if fixtures:
+                html_text = fetch.load_fixture_text("product_page.html")
+            else:
+                html_text = fetch.fetch_text(SOURCE, row["url"])
+        except Exception as exc:  # noqa: BLE001 - one bad page must not stop the run
+            log.warning("meta enrichment failed for %s: %s", row.get("handle"), exc)
+            continue
+
+        meta = parse.parse_product_meta(html_text)
+        if meta.get("meta_title"):
+            row["meta_title"] = meta["meta_title"]
+        if meta.get("meta_description"):
+            row["meta_description"] = meta["meta_description"]
+        # Backfill from JSON-LD only when the JSON pass left these empty.
+        if not row.get("description") and meta.get("jsonld_description"):
+            row["description"] = meta["jsonld_description"]
+        if row.get("price") is None and meta.get("jsonld_price") is not None:
+            row["price"] = meta["jsonld_price"]
 
 
 def _crawl_live() -> tuple[list[dict], list[dict]]:

@@ -87,7 +87,17 @@ def fetch_json(source: str, url: str) -> dict:
     return json.loads(fetch_bytes(source, url))
 
 
+def fetch_text(source: str, url: str) -> str:
+    """Fetch ``url`` and decode the body as UTF-8 text (for HTML pages)."""
+    return fetch_bytes(source, url).decode("utf-8", errors="replace")
+
+
 def load_fixture(name: str) -> dict:
     """Load a bundled fixture JSON file (offline dry-run mode). No network."""
+    return json.loads(load_fixture_text(name))
+
+
+def load_fixture_text(name: str) -> str:
+    """Load a bundled fixture file as raw text (offline dry-run mode). No network."""
     path = config.FIXTURES_DIR / name
-    return json.loads(path.read_text(encoding="utf-8"))
+    return path.read_text(encoding="utf-8")

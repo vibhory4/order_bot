@@ -19,11 +19,16 @@ SOURCE_CRAWLERS = {
 }
 
 
-def run(source: str, fixtures: bool) -> None:
+def run(source: str, fixtures: bool, enrich_meta: bool) -> None:
     crawl = SOURCE_CRAWLERS[source]
-    log.info("crawling %s%s", source, " (fixtures)" if fixtures else "")
+    log.info(
+        "crawling %s%s%s",
+        source,
+        " (fixtures)" if fixtures else "",
+        " +meta" if enrich_meta else "",
+    )
 
-    product_rows, collection_rows = crawl(fixtures=fixtures)
+    product_rows, collection_rows = crawl(fixtures=fixtures, enrich_meta=enrich_meta)
 
     products, product_failures = validate.validate_products(product_rows)
     collections, collection_failures = validate.validate_collections(collection_rows)
@@ -50,6 +55,11 @@ def main() -> None:
         "--fixtures", action="store_true",
         help="offline dry-run against bundled sample JSON (no network)",
     )
+    parser.add_argument(
+        "--enrich-meta", action="store_true",
+        help="Pass 2: fetch each product's HTML page for SEO meta_title/meta_description "
+             "(roughly doubles requests; still cached + throttled)",
+    )
     parser.add_argument("-v", "--verbose", action="store_true", help="debug logging")
     args = parser.parse_args()
 
@@ -58,7 +68,7 @@ def main() -> None:
         format="%(levelname)s %(name)s: %(message)s",
     )
 
-    run(args.source, args.fixtures)
+    run(args.source, args.fixtures, args.enrich_meta)
 
 
 if __name__ == "__main__":

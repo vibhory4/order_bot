@@ -14,6 +14,9 @@ python -m scraper.run --source cremecastle --fixtures
 
 # Live crawl (requires network egress to cremecastle.in):
 python -m scraper.run --source cremecastle
+
+# Live crawl + SEO meta enrichment (Pass 2, see below):
+python -m scraper.run --source cremecastle --enrich-meta
 ```
 
 Outputs are written to `data/`:
@@ -35,11 +38,22 @@ A summary is printed per source: `#collections`, `#products`, `#validation_failu
 | `sources/cremecastle.py` | — | Orchestrates the Shopify crawl (collections → per-collection products → canonical catalogue with category backfill). |
 | `run.py` | — | CLI entrypoint + summary. |
 
+## Two passes
+
+- **Pass 1 (default):** the Shopify `*.json` endpoints give names, descriptions, prices,
+  variants, tags, categories, and images. Fast and complete, but Shopify's public JSON has
+  **no SEO `meta_title` / `meta_description`**, so those stay null.
+- **Pass 2 (`--enrich-meta`):** for an SEO analysis, this fetches each product's HTML page and
+  reads `<title>`, `<meta name="description">`, and JSON-LD `Product` schema — filling the meta
+  fields and backfilling `description` / `price` only where Pass 1 left them empty. It roughly
+  doubles request count but reuses the same cache + 1 req/s throttle. Parsing uses the stdlib
+  `html.parser` (no BeautifulSoup dependency).
+
 ## Notes
 
 - **Shopify limitation:** the public product JSON has no SEO `meta_title` / `meta_description`
-  and no breadcrumb category, so `meta_*` are left null and `category` is derived from the
-  collection a product belongs to.
+  and no breadcrumb category, so `meta_*` need Pass 2 (`--enrich-meta`) and `category` is derived
+  from the collection a product belongs to.
 - **Network:** Claude Code cloud sessions block non-allowlisted hosts; allowlist
   `cremecastle.in` (network egress settings) for live runs, or run locally.
 - **User-Agent:** one honest, descriptive research-bot UA — no browser spoofing.
