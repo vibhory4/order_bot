@@ -38,20 +38,68 @@ def _paginated(path_template: str) -> list[dict]:
     return payloads
 
 
-def crawl(fixtures: bool = False, enrich_meta: bool = False) -> tuple[list[dict], list[dict]]:
+def crawl(
+    fixtures: bool = False,
+    enrich_meta: bool = False,
+    collection: str | None = None,
+) -> tuple[list[dict], list[dict]]:
     """Return ``(product_rows, collection_rows)`` for Creme Castle.
+
+    If ``collection`` (a collection handle) is given, only that one category is
+    scraped instead of the whole site.
 
     When ``enrich_meta`` is set, a second pass fetches each product's HTML page
     to fill the SEO ``meta_title`` / ``meta_description`` fields (and backfill
     description / price from JSON-LD) that the public JSON does not expose.
     """
-    if fixtures:
+    if collection:
+        product_rows, collection_rows = _crawl_collection(collection, fixtures=fixtures)
+    elif fixtures:
         product_rows, collection_rows = _crawl_fixtures()
     else:
         product_rows, collection_rows = _crawl_live()
 
     if enrich_meta:
         _enrich_meta(product_rows, fixtures=fixtures)
+
+    return product_rows, collection_rows
+
+
+def _all_collection_rows(fixtures: bool) -> list[dict]:
+    """Fetch and parse every collection (the full category map)."""
+    if fixtures:
+        return parse.parse_collections(SOURCE, fetch.load_fixture("collections.json"))
+    rows: list[dict] = []
+    for payload in _paginated("/collections.json?limit={limit}&page={page}"):
+        rows.extend(parse.parse_collections(SOURCE, payload))
+    return rows
+
+
+def _crawl_collection(handle: str, fixtures: bool) -> tuple[list[dict], list[dict]]:
+    """Scrape a single collection: its metadata + the products inside it."""
+    # 1. Find this collection's own metadata (title, description, count).
+    match = next((c for c in _all_collection_rows(fixtures) if c.get("handle") == handle), None)
+    if match is None:
+        log.warning("collection %r not found in /collections.json; scraping products only", handle)
+    title = match["title"] if match else None
+    collection_rows = [match] if match else []
+
+    # 2. Fetch the products that belong to this collection.
+    if fixtures:
+        payloads = [fetch.load_fixture("collection_products.json")]
+    else:
+        path = f"/collections/{handle}/products.json?limit={{limit}}&page={{page}}"
+        payloads = _paginated(path)
+
+    product_rows: list[dict] = []
+    seen: set[str] = set()
+    for payload in payloads:
+        for row in parse.parse_products(SOURCE, BASE_URL, payload, category=title):
+            h = row.get("handle")
+            if h in seen:
+                continue
+            seen.add(h)
+            product_rows.append(row)
 
     return product_rows, collection_rows
 

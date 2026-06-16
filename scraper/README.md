@@ -17,7 +17,14 @@ python -m scraper.run --source cremecastle
 
 # Live crawl + SEO meta enrichment (Pass 2, see below):
 python -m scraper.run --source cremecastle --enrich-meta
+
+# Scrape only ONE collection (category) by its handle:
+python -m scraper.run --source cremecastle --collection birthday-cakes --enrich-meta
 ```
+
+The collection handle is the slug in the site's category URL, e.g.
+`cremecastle.in/collections/birthday-cakes` → `birthday-cakes`. Run without
+`--collection` (or list `/collections.json`) to see all available handles.
 
 Outputs are written to `data/`:
 - `competitor_products.csv` / `.jsonl`
